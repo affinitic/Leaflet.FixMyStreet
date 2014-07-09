@@ -48,8 +48,9 @@ L.FixMyStreetMap = L.UrbisMap.extend({
   },
 
   _incidentLayers: {},
+  incidents: [],
 
-  initialize: function (id, options) { // (HTMLElement or String, Object)
+  initialize: function (id, options) {  // (HTMLElement or String, Object)
     var that = this;
 
     options = $.extend(this.DEFAULTS, options);
@@ -77,13 +78,27 @@ L.FixMyStreetMap = L.UrbisMap.extend({
     }
 
     this._incidentLayers[type].addLayer(m);
+    this.incidents.push(m);
   },
 
   _initIncidentLayers: function () {
     var that = this;
 
     $.each(this.incidentTypes, function (k, v) {
-      that._incidentLayers[k] = L.featureGroup().addTo(that);
+      that._incidentLayers[k] = new L.FixMyStreetMap.MarkerClusterGroup();
+      that._incidentLayers[k].on('clusterclick', that._onClusterClick)
+                             .addTo(that);
     });
   },
+
+  _onClusterClick: function (a) {  // 'clusterclick'
+    console.log('_onClusterClick');
+  },
+});
+
+
+L.FixMyStreetMap.MarkerClusterGroup = L.MarkerClusterGroup.extend({
+  iconCreateFunction: function(cluster) {
+    return new L.DivIcon({ html: '<b style="">' + cluster.getChildCount() + '</b>' });
+  }
 });

@@ -14,9 +14,12 @@ L.FixMyStreetMap = L.UrbisMap.extend({
 
   DEFAULTS: {
     language: 'fr',
+
+    // Layers loaded during initialize
     urbisLayers: ['base-map-fr', 'municipal-boundaries', 'regional-roads'],
   },
 
+  // Config per incident type
   incidentTypes: {
     reported: {
       title: 'Reported',

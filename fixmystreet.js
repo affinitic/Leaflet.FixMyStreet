@@ -1,14 +1,3 @@
-// Customize URBIS_LAYERS
-URBIS_LAYERS['regional-roads']['options']['opacity'] = 0.5;
-URBIS_LAYERS['regional-roads']['options']['filter'] =
-  '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
-    '<ogc:PropertyIsEqualTo matchCase="true">' +
-      '<ogc:PropertyName>ADMINISTRATOR</ogc:PropertyName>' +
-      '<ogc:Literal>REG</ogc:Literal>' +
-    '</ogc:PropertyIsEqualTo>' +
-  '</ogc:Filter>';
-
-
 L.FixMyStreetMap = L.UrbisMap.extend({
   VERSION: '0.1.0',
 
@@ -16,7 +5,11 @@ L.FixMyStreetMap = L.UrbisMap.extend({
     language: 'fr',
 
     // Layers loaded during initialize
-    urbisLayers: ['base-map-fr', 'municipal-boundaries', 'regional-roads'],
+    urbisLayersToLoad: [
+      'base-map-fr',
+      'municipal-boundaries',
+      'regional-roads',
+    ],
   },
 
   // Config per incident type
@@ -54,15 +47,10 @@ L.FixMyStreetMap = L.UrbisMap.extend({
   incidents: [],
 
   initialize: function (id, options) {  // (HTMLElement or String, Object)
-    var that = this;
-
     options = $.extend(this.DEFAULTS, options);
     L.UrbisMap.prototype.initialize.call(this, id, options);
 
-    $.each(options.urbisLayers, function (k, v) {
-      that.loadUrbisLayer(v);
-    });
-
+    this._initUrbisLayers();
     this._initIncidentLayers();
   },
 
@@ -82,6 +70,25 @@ L.FixMyStreetMap = L.UrbisMap.extend({
 
     this._incidentLayers[type].addLayer(m);
     this.incidents.push(m);
+  },
+
+  _initUrbisLayers: function () {
+    var that = this;
+
+    // Customize L.UrbisMap.layersSettings
+    L.UrbisMap.layersSettings['regional-roads']['options']['opacity'] = 0.5;
+    L.UrbisMap.layersSettings['regional-roads']['options']['filter'] =
+      '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
+        '<ogc:PropertyIsEqualTo matchCase="true">' +
+          '<ogc:PropertyName>ADMINISTRATOR</ogc:PropertyName>' +
+          '<ogc:Literal>REG</ogc:Literal>' +
+        '</ogc:PropertyIsEqualTo>' +
+      '</ogc:Filter>';
+
+    // Load initial UrbIS layers
+    $.each(this.options.urbisLayersToLoad, function (k, v) {
+      that.loadLayer(v, L.UrbisMap.layersSettings[v]);
+    });
   },
 
   _initIncidentLayers: function () {

@@ -17,34 +17,48 @@
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
     <script src="../lib/leaflet.markercluster/0.4.0/leaflet.markercluster.js"></script><!-- Leaflet.MarkerCluster dependency -->
-    <script src="../lib/leaflet.urbis/urbis-layers.js"></script><!-- Leaflet.Urbis dependency -->
     <script src="../lib/leaflet.urbis/urbis.js"></script><!-- Leaflet.Urbis dependency -->
+    <script src="../lib/leaflet.urbis/urbis-layers.js"></script><!-- Leaflet.Urbis dependency -->
     <script src="../leaflet-dev.js"></script><!-- Leaflet utils -->
     <script src="../fixmystreet.js"></script>
     <script>
       var map;
 
-      // Initialize a FixMyStreet map
-      map = new L.FixMyStreetMap('map');
+      $(document).ready(function() {
+        // Initialize a FixMyStreet map
+        map = new L.FixMyStreetMap('map');
 
-      // Get all incident types
-      var incidentTypes = [];
-      for (var k in map.incidentTypes) {
-        incidentTypes.push(k);
-      }
+        // Initialize available map sizes.
+        var mapSizes = {
+          '': 'Default',
+          'map-size-small': 'Small',
+        };
+        var $selectMapSizes = $('#map-sizes');
+        $.each(mapSizes, function (k, v) {
+          $selectMapSizes.append(
+            $('<option></option>').attr('value', k).text(v)
+          );
+        });
 
-      // Add random incidents
-      var n, type, popup;
-      for (var i = 0; i < 100; i++) {
-        n = Math.floor(Math.random() * 10) % incidentTypes.length;
-        type = incidentTypes[n];
-        popup = i >= 50
-              ? null
-              : '<div><strong>Type:</strong> ' + type + '</div>' +
-                '<div><strong>ID:</strong> ' + i + '</div>';
+        // Get all incident types
+        var incidentTypes = [];
+        for (var k in map.incidentTypes) {
+          incidentTypes.push(k);
+        }
 
-        map.addIncident(type, getRandomLatLng(map), popup);
-      }
+        // Add random incidents
+        var n, type, popup;
+        for (var i = 0; i < 100; i++) {
+          n = Math.floor(Math.random() * 10) % incidentTypes.length;
+          type = incidentTypes[n];
+          popup = i >= 50
+                ? null
+                : '<div><strong>Type:</strong> ' + type + '</div>' +
+                  '<div><strong>ID:</strong> ' + i + '</div>';
+
+          map.addIncident(type, getRandomLatLng(map), popup);
+        }
+      });
     </script>
   </body>
 </html>

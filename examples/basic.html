@@ -40,6 +40,8 @@
       <div class="group">
         <strong>Markers:</strong>
         <button id="btn-add-random-markers">Add Random</button>
+        <button id="btn-new-incident">New Incident</button>
+        <button id="btn-remove-new-incident">Remove New Incident</button>
       </div>
       <div class="group">
         <strong>Sizes:</strong>
@@ -97,6 +99,23 @@
 
             map.addIncident(type, latlng, popup);
           }
+        });
+
+        // Add a new incident when clicking on the map.
+        // map.on('click', function (options) {
+        //   map.addNewincideNtmarker(options.latlng);
+        // });
+
+        // Add a new incident draggable marker.
+        $('#btn-new-incident').click(function (evt) {
+          evt.preventDefault();
+          map.addNewIncidentMarker();
+        });
+
+        // Remove the new incident marker.
+        $('#btn-remove-new-incident').click(function (evt) {
+          evt.preventDefault();
+          map.removeNewIncidentMarker();
         });
 
         // Change map dimensions.

@@ -12,6 +12,16 @@ L.FixMyStreetMap = L.UrbisMap.extend({
     ],
   },
 
+  options: {
+    newIncidentMarker: {
+      icon: L.icon({
+        iconUrl: 'http://fixmystreet.irisnetlab.be/static/images/pin-fixmystreet-L.png',
+        iconAnchor: [20, 52],
+        popupAnchor: [0, -35],
+      }),
+    },
+  },
+
   // Config per incident type
   incidentTypes: {
     reported: {
@@ -75,6 +85,30 @@ L.FixMyStreetMap = L.UrbisMap.extend({
     this.incidents.push(m);
   },
 
+  addNewIncidentMarker: function (latlng, popup) {
+    if (this.newIncidentMarker) {
+      console.log('WARNING: A new incident marker is already loaded.');
+      return;
+    }
+
+    var that = this;
+    var markerOptions = {
+      draggable: true,
+      icon: this.options.newIncidentMarker.icon,
+      popup: popup || this.options.newIncidentMarker.popup,
+    };
+
+    this.newIncidentMarker = this.addMarker(latlng, markerOptions, this);
+
+    this.newIncidentMarker.on('dragend', function (evt) {
+      that._newIncidentMarker_onDragEnd(that, evt);
+    });
+  },
+
+  removeNewIncidentMarker: function () {
+    this.removeLayer(this.newIncidentMarker);
+    this.newIncidentMarker = null;
+  },
 
   // INITIALIZATION ------------------------------------------------------------
 
@@ -118,6 +152,11 @@ L.FixMyStreetMap = L.UrbisMap.extend({
     that.centerMapOnMarker(evt.target);
   },
 
+  _newIncidentMarker_onDragEnd: function (that, evt) {  // marker.dragend
+    var marker = evt.target;
+    var position = marker.getLatLng();
+    marker.setLatLng(new L.LatLng(position.lat, position.lng), {draggable: 'true'});
+    that.panTo(new L.LatLng(position.lat, position.lng));
   },
 });
 

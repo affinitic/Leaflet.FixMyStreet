@@ -8,11 +8,44 @@
       <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
       <link rel="stylesheet" href="../lib/leaflet.markercluster/0.4.0/MarkerCluster.Default.css" />
       <style>
-        #map { height: 500px; }
+        .cf:before, .cf:after { content: " "; display: table; }
+        .cf:after { clear: both; }
+        .cf { *zoom: 1; }
+        body, select {
+          font-family: Sans-Serif;
+        }
+        #map {
+          height: 500px;
+        }
+        #map.map-size-small {
+          height: 200px;
+        }
+        .actions {
+          margin-top: 10px;
+        }
+        .group {
+          background-color: #eee;
+          float: left;
+          padding: 3px 6px;
+        }
+        .group:not(:first-child) {
+          margin-left: 10px;
+        }
       </style>
   </head>
   <body>
     <div id="map"></div>
+
+    <div class="actions cf">
+      <div class="group">
+        <strong>Markers:</strong>
+        <button id="btn-add-random-markers">Add Random</button>
+      </div>
+      <div class="group">
+        <strong>Sizes:</strong>
+        <select id="map-sizes"></select>
+      </div>
+    </div>
 
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
@@ -25,7 +58,7 @@
       var map;
 
       $(document).ready(function() {
-        // Initialize a FixMyStreet map
+        // Initialize a FixMyStreet map.
         map = new L.FixMyStreetMap('map');
 
         // Initialize available map sizes.
@@ -40,24 +73,37 @@
           );
         });
 
-        // Get all incident types
+        // Get all incident types.
         var incidentTypes = [];
         for (var k in map.incidentTypes) {
           incidentTypes.push(k);
         }
 
-        // Add random incidents
-        var n, type, popup;
-        for (var i = 0; i < 100; i++) {
-          n = Math.floor(Math.random() * 10) % incidentTypes.length;
-          type = incidentTypes[n];
-          popup = i >= 50
-                ? null
-                : '<div><strong>Type:</strong> ' + type + '</div>' +
-                  '<div><strong>ID:</strong> ' + i + '</div>';
 
-          map.addIncident(type, getRandomLatLng(map), popup);
-        }
+        // CLICK HANDLERS...
+
+        // Add random incidents.
+        $('#btn-add-random-markers').click(function (evt) {
+          evt.preventDefault();
+          var n, type, latlng, popup;
+          for (var i = 0; i < 100; i++) {
+            n = Math.floor(Math.random() * 10) % incidentTypes.length;
+            type = incidentTypes[n];
+            latlng = getRandomLatLng(map);
+            popup = i >= 50
+                  ? null
+                  : '<div><strong>Type:</strong> ' + type + '</div>' +
+                    '<div><strong>ID:</strong> ' + i + '</div>';
+
+            map.addIncident(type, latlng, popup);
+          }
+        });
+
+        // Change map dimensions.
+        $selectMapSizes.change(function (evt) {
+          evt.preventDefault();
+          map.setCssSize($selectMapSizes.val());
+        });
       });
     </script>
   </body>

@@ -75,6 +75,9 @@ L.FixMyStreetMap = L.UrbisMap.extend({
     this.incidents.push(m);
   },
 
+
+  // INITIALIZATION ------------------------------------------------------------
+
   _initUrbisLayers: function () {
     var that = this;
 
@@ -99,13 +102,22 @@ L.FixMyStreetMap = L.UrbisMap.extend({
 
     $.each(this.incidentTypes, function (k, v) {
       that._incidentLayers[k] = new L.FixMyStreetMap.MarkerClusterGroup();
-      that._incidentLayers[k].on('clusterclick', that._onClusterClick)
-                             .addTo(that);
+      that._incidentLayers[k].on('clusterclick', function (evt) {
+        that._cluster_onClick(that, evt);
+      });
+      that._incidentLayers[k].addTo(that);
     });
   },
 
-  _onClusterClick: function (a) {  // 'clusterclick'
-    console.log('_onClusterClick');
+  // EVENT HANDLERS ------------------------------------------------------------
+
+  _cluster_onClick: function (that, evt) {  // layer.clusterclick
+  },
+
+  _incident_onClick: function (that, evt) {  // marker.click
+    that.centerMapOnMarker(evt.target);
+  },
+
   },
 });
 

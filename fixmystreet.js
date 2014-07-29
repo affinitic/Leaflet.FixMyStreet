@@ -60,15 +60,18 @@ L.FixMyStreetMap = L.UrbisMap.extend({
       return;
     }
 
-    var m = new L.Marker(latlng);
-    if (this.incidentTypes[type].icon) {
-      m.setIcon(this.incidentTypes[type].icon);
-    }
-    if (popup) {
-      m.bindPopup(popup);
-    }
+    var that = this;
+    var markerOptions = {
+      icon: this.incidentTypes[type].icon,
+      popup: popup || this.incidentTypes[type].popup,
+    };
 
-    this._incidentLayers[type].addLayer(m);
+    var m = this.addMarker(latlng, markerOptions, this._incidentLayers[type]);
+
+    m.on('click', function (evt) {
+      that._incident_onClick(that, evt);
+    });
+
     this.incidents.push(m);
   },
 

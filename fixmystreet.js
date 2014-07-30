@@ -1,4 +1,6 @@
-L.FixMyStreetMap = L.UrbisMap.extend({
+L.FixMyStreet = L.FixMyStreet || {};
+
+L.FixMyStreet.Map = L.Urbis.Map.extend({
   VERSION: '0.1.0',
 
   DEFAULTS: {
@@ -58,7 +60,7 @@ L.FixMyStreetMap = L.UrbisMap.extend({
 
   initialize: function (id, options) {  // (HTMLElement or String, Object)
     options = $.extend(this.DEFAULTS, options);
-    L.UrbisMap.prototype.initialize.call(this, id, options);
+    L.Urbis.Map.prototype.initialize.call(this, id, options);
 
     this._initUrbisLayers();
     this._initIncidentLayers();
@@ -115,9 +117,9 @@ L.FixMyStreetMap = L.UrbisMap.extend({
   _initUrbisLayers: function () {
     var that = this;
 
-    // Customize L.UrbisMap.layersSettings
-    L.UrbisMap.layersSettings['regional-roads']['options']['opacity'] = 0.5;
-    L.UrbisMap.layersSettings['regional-roads']['options']['filter'] =
+    // Customize `L.Urbis.Map.layersSettings`
+    L.Urbis.Map.layersSettings['regional-roads']['options']['opacity'] = 0.5;
+    L.Urbis.Map.layersSettings['regional-roads']['options']['filter'] =
       '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
         '<ogc:PropertyIsEqualTo matchCase="true">' +
           '<ogc:PropertyName>ADMINISTRATOR</ogc:PropertyName>' +
@@ -127,7 +129,7 @@ L.FixMyStreetMap = L.UrbisMap.extend({
 
     // Load initial UrbIS layers
     $.each(this.options.urbisLayersToLoad, function (k, v) {
-      that.loadLayer(v, L.UrbisMap.layersSettings[v]);
+      that.loadLayer(v, L.Urbis.Map.layersSettings[v]);
     });
   },
 
@@ -135,7 +137,7 @@ L.FixMyStreetMap = L.UrbisMap.extend({
     var that = this;
 
     $.each(this.incidentTypes, function (k, v) {
-      that._incidentLayers[k] = new L.FixMyStreetMap.MarkerClusterGroup();
+      that._incidentLayers[k] = new L.FixMyStreet.Map.MarkerClusterGroup();
       that._incidentLayers[k].on('clusterclick', function (evt) {
         that._cluster_onClick(that, evt);
       });
@@ -161,7 +163,7 @@ L.FixMyStreetMap = L.UrbisMap.extend({
 });
 
 
-L.FixMyStreetMap.MarkerClusterGroup = L.MarkerClusterGroup.extend({
+L.FixMyStreet.Map.MarkerClusterGroup = L.MarkerClusterGroup.extend({
   iconCreateFunction: function(cluster) {
     return new L.DivIcon({ html: '<b style="">' + cluster.getChildCount() + '</b>' });
   }
